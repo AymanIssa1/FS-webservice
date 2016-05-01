@@ -1,5 +1,5 @@
 {
-  "name": "felsekka",
+  "name": "fs",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -22,11 +22,11 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ayman003/mobo-test.git"
+    "url": ""
   },
   "bugs": {
-    "url": "https://github.com/ayman003/mobo-test/issues"
+    "url": ""
   },
-  "homepage": "https://github.com/ayman003/mobo-test#readme",
+  "homepage": "",
   "description": ""
 }
