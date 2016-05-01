@@ -1,9 +1,15 @@
 {
   "name": "felsekka",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "",
+  "main": "db.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ayman003/FS-webservice.git"
   },
   "author": "",
   "license": "ISC",
@@ -17,5 +23,9 @@
     "sequelize": "^3.5.1",
     "sqlite3": "^3.0.10",
     "underscore": "^1.8.3"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/ayman003/FS-webservice/issues"
+  },
+  "homepage": "https://github.com/ayman003/FS-webservice#readme"
 }
