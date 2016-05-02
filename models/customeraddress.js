@@ -8,18 +8,12 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
         ca_lat:{
-            type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-                len: [1, 250]
-            }
+            type: DataTypes.DOUBLE,
+            allowNull: false
         },
         ca_lng:{
-            type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-                len: [1, 250]
-            }
+            type: DataTypes.DOUBLE,
+            allowNull: false
         },
         ca_phone:{
             type: DataTypes.STRING,
