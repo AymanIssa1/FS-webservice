@@ -2,8 +2,8 @@ var Sequelize = require('sequelize');
 var env = process.env.NODE_ENV || 'development';
 var sequelize;
 
-// if (env === 'production') {
-if (env === process.env.NODE_ENV) {
+if (env === 'production') {
+// if (env === process.env.NODE_ENV) {
 
 
   sequelize = new Sequelize(process.env.DATABASE_URL, {
