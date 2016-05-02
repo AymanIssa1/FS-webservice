@@ -20,7 +20,7 @@ app.get('/', function(request, response) {
 // Register New Customer
 app.post('/customer/register', function(request, response) {
 
-    var body = _.pick(request.body, "customerFirstName", "customerLastName", "isMale", "email", "password");
+    var body = _.pick(request.body, "customerFirstName", "customerLastName", "companyName","isMale", "email", "password");
     db.customer.create(body).then(function(customer) {
         response.json(customer.toJSON());
     }, function(e) {

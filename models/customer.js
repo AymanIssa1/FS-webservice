@@ -18,6 +18,13 @@ module.exports = function(sequelize, DataTypes) {
                 len: [2, 100]
             }
         },
+        companyName: {
+            type: DataTypes.STRING,
+            allowNull:false,
+            validate: {
+                len: [2, 100]
+            }
+        },
         isMale: {
             type: DataTypes.BOOLEAN,
             allownull: false
