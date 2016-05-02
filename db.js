@@ -3,22 +3,25 @@ var env = process.env.NODE_ENV || 'development';
 var sequelize;
 
 // if (env === 'production') {
-//     sequelize = new Sequelize(process.env.DATABASE_URL, {
-//         dialect: 'postgres'
-//     });
+if (env === process.env.NODE_ENV) {
 
-if (process.env.DATABASE_URL) {
-  // the application is executed on Heroku ... use the postgres database
+
   sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect:  'postgres',
-    protocol: 'postgres',
-    logging:  true //false
+    dialect: 'postgres'
   });
+
+  // if (process.env.DATABASE_URL) {
+  //   // the application is executed on Heroku ... use the postgres database
+  //   sequelize = new Sequelize(process.env.DATABASE_URL, {
+  //     dialect:  'postgres',
+  //     protocol: 'postgres',
+  //     logging:  true //false
+  //   });
 } else {
-    sequelize = new Sequelize(undefined, undefined, undefined, {
-        'dialect': 'sqlite',
-        'storage': __dirname + '/data/felsekka.sqlite'
-    });
+  sequelize = new Sequelize(undefined, undefined, undefined, {
+    'dialect': 'sqlite',
+    'storage': __dirname + '/data/felsekka.sqlite'
+  });
 }
 
 var db = {};
@@ -46,8 +49,16 @@ db.customeraddress.belongsTo(db.customer);
 db.customer.hasMany(db.customeraddress);
 
 //relation between services and employees
-db.employee.belongsTo(db.service , { foreignKey: { allowNull: false }});
-db.service.hasMany(db.employee, { foreignKey: { allowNull: false }});
+db.employee.belongsTo(db.service, {
+  foreignKey: {
+    allowNull: false
+  }
+});
+db.service.hasMany(db.employee, {
+  foreignKey: {
+    allowNull: false
+  }
+});
 
 // relation between orders and (customer , customerAddress , service , employee)
 //orders and customer
@@ -60,8 +71,16 @@ db.customeraddress.hasMany(db.order);
 db.order.belongsTo(db.service);
 db.service.hasMany(db.order);
 //order and service
-db.order.belongsTo(db.employee, { foreignKey: { allowNull: true }});
-db.employee.hasMany(db.order, { foreignKey: { allowNull: true }});
+db.order.belongsTo(db.employee, {
+  foreignKey: {
+    allowNull: true
+  }
+});
+db.employee.hasMany(db.order, {
+  foreignKey: {
+    allowNull: true
+  }
+});
 
 
 module.exports = db;
