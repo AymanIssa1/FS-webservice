@@ -6,7 +6,7 @@ module.exports = function(db) {
         requireAuthentication: function(request, response, next) {
             var token = request.get('Auth');
 
-            db.customertoken.findOne({
+            db.businesstoken.findOne({
                 where: {
                     tokenHash: cryptojs.MD5(token).toString()
                 }
@@ -14,11 +14,13 @@ module.exports = function(db) {
                 if (!tokenInstance) {
                     throw new Error();
                 }
-
+                console.log("@@@@@@@@@@@@@@@@@@@@@@ first " + tokenInstance);
                 request.token = tokenInstance;
-                return db.customer.findByToken(token);
-            }).then(function(customer) {
-                request.customer = customer;
+                return db.business.findByToken(token);
+            }).then(function(business) {
+                console.log("@@@@@@@@@@@@@@@@@@@@@@ second " + business);
+
+                request.business = business;
                 next();
             }).catch(function() {
                 response.status(401).send();

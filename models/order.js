@@ -33,6 +33,14 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.DOUBLE,
             allowNull: false
         },
+        distance:{
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
+        duration:{
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
         tokeAt: {
             type: DataTypes.DATE,
             allowNull: true

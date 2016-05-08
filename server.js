@@ -2,13 +2,11 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var db = require('./db.js');
-var middlewareCustomer = require('./middlewareCustomer.js')(db);
+var middlewareBusiness = require('./middlewareBusiness.js')(db);
 var middlewareEmployee = require('./middlewareEmployee.js')(db);
 
 var app = express();
 var PORT = process.env.PORT || 3000;
-//var todos = [];
-
 
 app.use(bodyParser.json());
 
@@ -17,30 +15,30 @@ app.get('/', function(request, response) {
 });
 
 
-// Register New Customer
-app.post('/customer/register', function(request, response) {
+// Register New business
+app.post('/business/register', function(request, response) {
 
     var body = _.pick(request.body, "customerFirstName", "customerLastName", "companyName","isMale", "email","phone", "password");
-    db.customer.create(body).then(function(customer) {
-        response.json(customer.toJSON());
+    db.business.create(body).then(function(business) {
+        response.json(business.toJSON());
     }, function(e) {
         response.status(400).json(e);
     });
 });
 
-// login Customer
-app.post('/customer/login', function(request, response) {
+// login business
+app.post('/business/login', function(request, response) {
     var body = _.pick(request.body, 'email', 'password');
-    var customerInstance;
+    var businessInstance;
 
-    db.customer.authenticate(body).then(function(customer) {
-        var token = customer.generateToken('authentication');
-        customerInstance = customer;
+    db.business.authenticate(body).then(function(business) {
+        var token = business.generateToken('authentication');
+        businessInstance = business;
 
-        console.log(customer + " $$$$$ " + token);
+        console.log(business + " $$$$$ " + token);
 
         try {
-            return db.customertoken.create({
+            return db.businesstoken.create({
                 token: token
             });
         } catch (e) {
@@ -48,15 +46,15 @@ app.post('/customer/login', function(request, response) {
         }
 
     }).then(function(tokenInstance) {
-        response.header('Auth', tokenInstance.get('token')).json(customerInstance.toPublicJSON());
+        response.header('Auth', tokenInstance.get('token')).json(businessInstance.toPublicJSON());
     }).catch(function() {
         response.status(401).send();
     });
 
 });
 
-// Customer logging out
-app.delete('/customer/logout', middlewareCustomer.requireAuthentication, function(request, response) {
+// business logging out
+app.delete('/business/logout', middlewareBusiness.requireAuthentication, function(request, response) {
     request.customertoken.destroy().then(function() {
         response.status(204).send();
     }).catch(function() {
@@ -64,67 +62,10 @@ app.delete('/customer/logout', middlewareCustomer.requireAuthentication, functio
     });
 });
 
-// customer add customerAddress
-// app.post('/customer/customeraddress', middlewareCustomer.requireAuthentication, function(request, response) {
-//     var body = _.pick(request.body, "ca_lat", "ca_lng", "ca_phone");
-
-//     db.customeraddress.create(body).then(function(customeraddress) {
-//         request.customer.addCustomeraddress(customeraddress).then(function() {
-//             return customeraddress.reload();
-//         }).then(function(customeraddress) {
-//             response.json(customeraddress.toJSON());
-//         });
-//     }, function(e) {
-//         response.status(400);
-//     });
-
-// });
-
-// get all customerAddressess that related to customer
-// app.get('/customer/customeraddress', middlewareCustomer.requireAuthentication, function(request, response) {
-//     var query = request.query;
-
-//     var where = {
-//         customerId: request.customer.get('id')
-//     };
-
-//     db.customeraddress.findAll({
-//         where: where
-//     }).then(function(customeraddresses) {
-//         response.json(customeraddresses);
-//     }, function() {
-//         response.status(500).send();
-//     });
-
-// });
-
-// Add New Service
-app.post('/service', function(request, response) {
-
-    var body = _.pick(request.body, "service_name", "service_description", "service_price");
-
-    db.service.create(body).then(function(service) {
-        response.json(service.toJSON());
-    }, function(e) {
-        response.status(400).json(e);
-    });
-});
-
-//GET All Services
-app.get('/service', function(request, response) {
-    db.service.findAll().then(function(service) {
-        response.json(service);
-    }, function(e) {
-        response.status(500).send();
-    });
-
-});
-
-
 // Register New Employee
 app.post('/employee/register', function(request, response) {
 
-    var body = _.pick(request.body, "email", "employeeFullName", "isMale", "birthDate", "address", "phone", "password", "serviceId");
+    var body = _.pick(request.body, "email", "employeeFullName", "isMale", "birthDate", "address", "phone", "password");
     db.employee.create(body).then(function(employee) {
         response.json(employee.toJSON());
     }, function(e) {
@@ -170,11 +111,12 @@ app.delete('/employee/logout', middlewareEmployee.requireEmployeeAuthentication,
 
 
 //post an order
-app.post('/order/add', middlewareCustomer.requireAuthentication, function(request, response) {
-    var body = _.pick(request.body, "order_status", "description", "customeraddressId", "serviceId");
+app.post('/order/add', middlewareBusiness.requireAuthentication, function(request, response) {
+    var body = _.pick(request.body, "description", "lat_start", "lng_start","lat_end","lng_end","distance","duration");
+    body.order_status = "NEW";
 
     db.order.create(body).then(function(order) {
-        request.customer.addOrder(order).then(function() {
+        request.business.addOrder(order).then(function() {
             return order.reload();
         }).then(function(order) {
             response.json(order.toJSON());
@@ -188,7 +130,7 @@ app.post('/order/add', middlewareCustomer.requireAuthentication, function(reques
 app.get('/orders', middlewareEmployee.requireEmployeeAuthentication, function(request, response) {
     db.order.findAll({
         where: {
-            order_status: "New",
+            order_status: "NEW",
         }
         // ,
         // include: [{
@@ -219,7 +161,7 @@ app.put('/employee/takeorder/:id', middlewareEmployee.requireEmployeeAuthenticat
                 {
                     employeeId: employeeId,
                     tokeAt: new Date(),
-                    order_status: "Toke"
+                    order_status: "TOKE"
                 },
                 // where clause
                 {
@@ -237,7 +179,6 @@ app.put('/employee/takeorder/:id', middlewareEmployee.requireEmployeeAuthenticat
     })
 
 
-
 });
 
 //employee finish the order
@@ -249,7 +190,7 @@ app.put('/employee/finishorder/:id', middlewareEmployee.requireEmployeeAuthentic
         //set values
         {
             finishedAt: new Date(),
-            order_status: "Done"
+            order_status: "DONE"
         },
         // where clause
         {

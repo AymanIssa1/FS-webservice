@@ -3,7 +3,7 @@ var cryptojs = require('crypto-js');
 var jwt = require('jsonwebtoken');
 
 module.exports = function(sequelize, DataTypes) {
-    var customer = sequelize.define('customer', {
+    var business = sequelize.define('business', {
         customerFirstName: {
             type: DataTypes.STRING,
             allowNull:false,
@@ -54,9 +54,9 @@ module.exports = function(sequelize, DataTypes) {
 
     }, {
         hooks: {
-            beforeValidate: function(customer, options) {
-                if (typeof customer.email === 'string') {
-                    customer.email = customer.email.toLowerCase();
+            beforeValidate: function(business, options) {
+                if (typeof business.email === 'string') {
+                    business.email = business.email.toLowerCase();
                 }
             }
         },
@@ -67,16 +67,16 @@ module.exports = function(sequelize, DataTypes) {
                         return reject();
                     }
 
-                    customer.findOne({
+                    business.findOne({
                         where: {
                             email: body.email,
                             password: body.password
                         }
-                    }).then(function(customer) {
-                        if (!customer) {
+                    }).then(function(business) {
+                        if (!business) {
                             return reject();
                         }
-                        resolve(customer);
+                        resolve(business);
                     }, function(e) {
                         reject();
                     });
@@ -89,9 +89,9 @@ module.exports = function(sequelize, DataTypes) {
                         var bytes = cryptojs.AES.decrypt(decodedJWT.token, 'abc123!@#!');
                         var tokenData = JSON.parse(bytes.toString(cryptojs.enc.Utf8));
 
-                        customer.findById(tokenData.id).then(function(customer) {
-                            if (customer) {
-                                resolve(customer);
+                        business.findById(tokenData.id).then(function(business) {
+                            if (business) {
+                                resolve(business);
                             } else {
                                 reject();
                             }
@@ -133,5 +133,5 @@ module.exports = function(sequelize, DataTypes) {
             }
         }
     });
-    return customer;
+    return business;
 };

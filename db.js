@@ -29,16 +29,11 @@ if (env === 'production') {
 
 var db = {};
 
-db.customertoken = sequelize.import(__dirname + '/models/customertoken.js');
+db.businesstoken = sequelize.import(__dirname + '/models/businesstoken.js');
 db.employeetoken = sequelize.import(__dirname + '/models/employeetoken.js');
 
-db.customer = sequelize.import(__dirname + '/models/customer.js');
-// db.customeraddress = sequelize.import(__dirname + '/models/customeraddress.js');
-
-db.service = sequelize.import(__dirname + '/models/service.js');
+db.business = sequelize.import(__dirname + '/models/business.js');
 db.employee = sequelize.import(__dirname + '/models/employee.js');
-
-
 db.order = sequelize.import(__dirname + '/models/order.js');
 
 
@@ -46,37 +41,12 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 
+// relation between orders and (business , employee)
+//orders and business
+db.order.belongsTo(db.business);
+db.business.hasMany(db.order);
 
-//customers and customerAddress relationship
-// db.customeraddress.belongsTo(db.customer);
-// db.customer.hasMany(db.customeraddress);
-
-//relation between services and employees
-db.employee.belongsTo(db.service, {
-  foreignKey: {
-    allowNull: false
-  }
-});
-db.service.hasMany(db.employee, {
-  foreignKey: {
-    allowNull: false
-  }
-});
-
-// relation between orders and (customer , customerAddress , service , employee)
-//orders and customer
-db.order.belongsTo(db.customer);
-db.customer.hasMany(db.order);
-
-//order and customerAddress
-// db.order.belongsTo(db.customeraddress);
-// db.customeraddress.hasMany(db.order);
-
-
-//order and service
-db.order.belongsTo(db.service);
-db.service.hasMany(db.order);
-//order and service
+//order and employee
 db.order.belongsTo(db.employee, {
   foreignKey: {
     allowNull: true
