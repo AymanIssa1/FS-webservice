@@ -33,7 +33,7 @@ db.customertoken = sequelize.import(__dirname + '/models/customertoken.js');
 db.employeetoken = sequelize.import(__dirname + '/models/employeetoken.js');
 
 db.customer = sequelize.import(__dirname + '/models/customer.js');
-db.customeraddress = sequelize.import(__dirname + '/models/customeraddress.js');
+// db.customeraddress = sequelize.import(__dirname + '/models/customeraddress.js');
 
 db.service = sequelize.import(__dirname + '/models/service.js');
 db.employee = sequelize.import(__dirname + '/models/employee.js');
@@ -48,8 +48,8 @@ db.Sequelize = Sequelize;
 
 
 //customers and customerAddress relationship
-db.customeraddress.belongsTo(db.customer);
-db.customer.hasMany(db.customeraddress);
+// db.customeraddress.belongsTo(db.customer);
+// db.customer.hasMany(db.customeraddress);
 
 //relation between services and employees
 db.employee.belongsTo(db.service, {
@@ -67,9 +67,12 @@ db.service.hasMany(db.employee, {
 //orders and customer
 db.order.belongsTo(db.customer);
 db.customer.hasMany(db.order);
+
 //order and customerAddress
-db.order.belongsTo(db.customeraddress);
-db.customeraddress.hasMany(db.order);
+// db.order.belongsTo(db.customeraddress);
+// db.customeraddress.hasMany(db.order);
+
+
 //order and service
 db.order.belongsTo(db.service);
 db.service.hasMany(db.order);

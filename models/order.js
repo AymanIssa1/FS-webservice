@@ -1,6 +1,8 @@
 
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define('order', {
+
+        // NEW , Toke , Done
         order_status: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -15,7 +17,22 @@ module.exports = function(sequelize, DataTypes) {
                 len: [2]
             }
         },
-        // NEW , Toke , Done
+        lat_start:{
+            type: DataTypes.DOUBLE,
+            allowNull: false
+        },
+        lng_start:{
+            type: DataTypes.DOUBLE,
+            allowNull: false
+        },
+        lat_end:{
+            type: DataTypes.DOUBLE,
+            allowNull: false
+        },
+        lng_end:{
+            type: DataTypes.DOUBLE,
+            allowNull: false
+        },
         tokeAt: {
             type: DataTypes.DATE,
             allowNull: true

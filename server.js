@@ -20,7 +20,7 @@ app.get('/', function(request, response) {
 // Register New Customer
 app.post('/customer/register', function(request, response) {
 
-    var body = _.pick(request.body, "customerFirstName", "customerLastName", "companyName","isMale", "email", "password");
+    var body = _.pick(request.body, "customerFirstName", "customerLastName", "companyName","isMale", "email","phone", "password");
     db.customer.create(body).then(function(customer) {
         response.json(customer.toJSON());
     }, function(e) {
@@ -65,38 +65,38 @@ app.delete('/customer/logout', middlewareCustomer.requireAuthentication, functio
 });
 
 // customer add customerAddress
-app.post('/customer/customeraddress', middlewareCustomer.requireAuthentication, function(request, response) {
-    var body = _.pick(request.body, "ca_lat", "ca_lng", "ca_phone");
+// app.post('/customer/customeraddress', middlewareCustomer.requireAuthentication, function(request, response) {
+//     var body = _.pick(request.body, "ca_lat", "ca_lng", "ca_phone");
 
-    db.customeraddress.create(body).then(function(customeraddress) {
-        request.customer.addCustomeraddress(customeraddress).then(function() {
-            return customeraddress.reload();
-        }).then(function(customeraddress) {
-            response.json(customeraddress.toJSON());
-        });
-    }, function(e) {
-        response.status(400);
-    });
+//     db.customeraddress.create(body).then(function(customeraddress) {
+//         request.customer.addCustomeraddress(customeraddress).then(function() {
+//             return customeraddress.reload();
+//         }).then(function(customeraddress) {
+//             response.json(customeraddress.toJSON());
+//         });
+//     }, function(e) {
+//         response.status(400);
+//     });
 
-});
+// });
 
 // get all customerAddressess that related to customer
-app.get('/customer/customeraddress', middlewareCustomer.requireAuthentication, function(request, response) {
-    var query = request.query;
+// app.get('/customer/customeraddress', middlewareCustomer.requireAuthentication, function(request, response) {
+//     var query = request.query;
 
-    var where = {
-        customerId: request.customer.get('id')
-    };
+//     var where = {
+//         customerId: request.customer.get('id')
+//     };
 
-    db.customeraddress.findAll({
-        where: where
-    }).then(function(customeraddresses) {
-        response.json(customeraddresses);
-    }, function() {
-        response.status(500).send();
-    });
+//     db.customeraddress.findAll({
+//         where: where
+//     }).then(function(customeraddresses) {
+//         response.json(customeraddresses);
+//     }, function() {
+//         response.status(500).send();
+//     });
 
-});
+// });
 
 // Add New Service
 app.post('/service', function(request, response) {
@@ -265,7 +265,7 @@ app.put('/employee/finishorder/:id', middlewareEmployee.requireEmployeeAuthentic
 
 
 db.sequelize.sync({
-    // force: true
+    force: true
 }).then(function() {
     app.listen(PORT, function() {
         console.log('Express listen on port ' + PORT + '!');
