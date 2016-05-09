@@ -6,20 +6,9 @@ console.log(process.env.DATABASE_URL);
 console.log(process.env.NODE_ENV);
 
 if (env === 'production') {
-// if (env === process.env.NODE_ENV) {
-
-
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres'
   });
-
-  // if (process.env.DATABASE_URL) {
-  //   // the application is executed on Heroku ... use the postgres database
-  //   sequelize = new Sequelize(process.env.DATABASE_URL, {
-  //     dialect:  'postgres',
-  //     protocol: 'postgres',
-  //     logging:  true //false
-  //   });
 } else {
   sequelize = new Sequelize(undefined, undefined, undefined, {
     'dialect': 'sqlite',
