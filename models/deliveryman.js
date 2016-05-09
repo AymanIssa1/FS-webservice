@@ -2,6 +2,8 @@ var _ = require("underscore");
 var cryptojs = require('crypto-js');
 var jwt = require('jsonwebtoken');
 
+//deliverymanFullName , isMale , birthDate, address, phone, email, password, totalWalkedDistance
+
 module.exports = function(sequelize, DataTypes) {
     var deliveryman = sequelize.define('deliveryman', {
         deliverymanFullName: {
