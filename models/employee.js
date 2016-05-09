@@ -47,6 +47,10 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 len: [7, 100]
             }
+        },
+        totalWalkedDistance: {
+            type: DataTypes.DOUBLE,
+            allownull: true
         }
 
     }, {

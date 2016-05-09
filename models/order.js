@@ -4,7 +4,7 @@ module.exports = function(sequelize, DataTypes) {
 
         // NEW , Toke , Done
         order_status: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: false,
             validate: {
                 len: [1]

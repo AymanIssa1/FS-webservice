@@ -18,7 +18,7 @@ app.get('/', function(request, response) {
 // Register New business
 app.post('/business/register', function(request, response) {
 
-    var body = _.pick(request.body, "customerFirstName", "customerLastName", "companyName","isMale", "email","phone", "password");
+    var body = _.pick(request.body, "customerFirstName", "customerLastName", "companyName", "isMale", "email", "phone", "password");
     db.business.create(body).then(function(business) {
         response.json(business.toJSON());
     }, function(e) {
@@ -66,6 +66,8 @@ app.delete('/business/logout', middlewareBusiness.requireAuthentication, functio
 app.post('/employee/register', function(request, response) {
 
     var body = _.pick(request.body, "email", "employeeFullName", "isMale", "birthDate", "address", "phone", "password");
+    body.totalWalkedDistance = 0.0;
+
     db.employee.create(body).then(function(employee) {
         response.json(employee.toJSON());
     }, function(e) {
@@ -110,9 +112,9 @@ app.delete('/employee/logout', middlewareEmployee.requireEmployeeAuthentication,
 });
 
 
-//post an order
+//business post an order
 app.post('/order/add', middlewareBusiness.requireAuthentication, function(request, response) {
-    var body = _.pick(request.body, "description", "lat_start", "lng_start","lat_end","lng_end","distance","duration");
+    var body = _.pick(request.body, "description", "lat_start", "lng_start", "lat_end", "lng_end", "distance", "duration");
     body.order_status = "NEW";
 
     db.order.create(body).then(function(order) {
@@ -123,6 +125,22 @@ app.post('/order/add', middlewareBusiness.requireAuthentication, function(reques
         });
     }, function(e) {
         response.status(400).send();
+    });
+});
+
+//business see all of his history
+app.get('/order/history', middlewareBusiness.requireAuthentication, function(request, response) {
+
+    var where = {
+        businessId: request.business.get('id')
+    };
+
+    db.order.findAll({
+        where: where
+    }).then(function(orders) {
+        response.json(orders)
+    }, function() {
+        response.status(500).send();
     });
 });
 
