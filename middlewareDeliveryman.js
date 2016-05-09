@@ -3,12 +3,12 @@ var cryptojs = require('crypto-js');
 module.exports = function(db) {
 
     return {
-        requireEmployeeAuthentication: function(request, response, next) {
-            var employeetoken = request.get('Auth');
+        requireAuthentication: function(request, response, next) {
+            var deliverymantoken = request.get('Auth');
 
-            db.employeetoken.findOne({
+            db.deliverymantoken.findOne({
                 where: {
-                    tokenHash: cryptojs.MD5(employeetoken).toString()
+                    tokenHash: cryptojs.MD5(deliverymantoken).toString()
                 }
             }).then(function(tokenInstance) {
                 if (!tokenInstance) {
@@ -16,9 +16,9 @@ module.exports = function(db) {
                 }
 
                 request.token = tokenInstance;
-                return db.employee.findByToken(employeetoken);
-            }).then(function(employee) {
-                request.employee = employee;
+                return db.deliveryman.findByToken(deliverymantoken);
+            }).then(function(deliveryman) {
+                request.deliveryman = deliveryman;
                 next();
             }).catch(function() {
                 response.status(401).send();

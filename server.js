@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 var _ = require('underscore');
 var db = require('./db.js');
 var middlewareBusiness = require('./middlewareBusiness.js')(db);
-var middlewareEmployee = require('./middlewareEmployee.js')(db);
+var middlewareDeliveryman = require('./middlewareDeliveryman.js')(db);
 
 var app = express();
 var PORT = process.env.PORT || 3000;
@@ -62,32 +62,32 @@ app.delete('/business/logout', middlewareBusiness.requireAuthentication, functio
     });
 });
 
-// Register New Employee
-app.post('/employee/register', function(request, response) {
+// Register New deliveryman
+app.post('/deliveryman/register', function(request, response) {
 
-    var body = _.pick(request.body, "email", "employeeFullName", "isMale", "birthDate", "address", "phone", "password");
+    var body = _.pick(request.body, "email", "deliverymanFullName", "isMale", "birthDate", "address", "phone", "password");
     body.totalWalkedDistance = 0.0;
 
-    db.employee.create(body).then(function(employee) {
-        response.json(employee.toJSON());
+    db.deliveryman.create(body).then(function(deliveryman) {
+        response.json(deliveryman.toJSON());
     }, function(e) {
         response.status(400).json(e);
     });
 });
 
-// login Employee
-app.post('/employee/login', function(request, response) {
+// login deliveryman
+app.post('/deliveryman/login', function(request, response) {
     var body = _.pick(request.body, 'email', 'password');
-    var employeeInstance;
+    var deliverymanInstance;
 
-    db.employee.authenticate(body).then(function(employee) {
-        var token = employee.generateToken('authentication');
-        employeeInstance = employee;
+    db.deliveryman.authenticate(body).then(function(deliveryman) {
+        var token = deliveryman.generateToken('authentication');
+        deliverymanInstance = deliveryman;
 
-        console.log(employee + " $$$$$ " + token);
+        // console.log(deliveryman + " $$$$$ " + token);
 
         try {
-            return db.employeetoken.create({
+            return db.deliverymantoken.create({
                 token: token
             });
         } catch (e) {
@@ -95,16 +95,16 @@ app.post('/employee/login', function(request, response) {
         }
 
     }).then(function(tokenInstance) {
-        response.header('Auth', tokenInstance.get('token')).json(employeeInstance.toPublicJSON());
+        response.header('Auth', tokenInstance.get('token')).json(deliverymanInstance.toPublicJSON());
     }).catch(function() {
         response.status(401).send();
     });
 
 });
 
-//Employee Logging out
-app.delete('/employee/logout', middlewareEmployee.requireEmployeeAuthentication, function(request, response) {
-    request.employeetoken.destroy().then(function() {
+//deliveryman Logging out
+app.delete('/deliveryman/logout', middlewareDeliveryman.requireAuthentication, function(request, response) {
+    request.deliverymantoken.destroy().then(function() {
         response.status(204).send();
     }).catch(function() {
         response.status(500).send();
@@ -144,8 +144,8 @@ app.get('/order/history', middlewareBusiness.requireAuthentication, function(req
     });
 });
 
-// employee get avaliable orders
-app.get('/orders', middlewareEmployee.requireEmployeeAuthentication, function(request, response) {
+// deliveryman get avaliable orders
+app.get('/orders', middlewareDeliveryman.requireAuthentication, function(request, response) {
     db.order.findAll({
         where: {
             order_status: "NEW",
@@ -162,22 +162,22 @@ app.get('/orders', middlewareEmployee.requireEmployeeAuthentication, function(re
     });
 });
 
-//employee take order (update)
-app.put('/employee/takeorder/:id', middlewareEmployee.requireEmployeeAuthentication, function(request, response) {
+//deliveryman take order (update)
+app.put('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthentication, function(request, response) {
     var orderId = parseInt(request.params.id, 10);
 
-    var employeeId = request.employee.get('id');
+    var deliverymanId = request.deliveryman.get('id');
 
     db.order.findOne({
         where: {
             Id: orderId
         }
     }).then(function(order) {
-        if (!order.employeeId) {
+        if (!order.deliverymanId) {
             db.order.update(
                 //set values
                 {
-                    employeeId: employeeId,
+                    deliverymanId: deliverymanId,
                     tokeAt: new Date(),
                     order_status: "TOKE"
                 },
@@ -199,10 +199,10 @@ app.put('/employee/takeorder/:id', middlewareEmployee.requireEmployeeAuthenticat
 
 });
 
-//employee finish the order
-app.put('/employee/finishorder/:id', middlewareEmployee.requireEmployeeAuthentication, function(request, response) {
+//deliveryman finish the order
+app.put('/deliveryman/finishorder/:id', middlewareDeliveryman.requireAuthentication, function(request, response) {
     var orderId = parseInt(request.params.id, 10);
-    var employeeId = request.employee.get('id');
+    var deliverymanId = request.deliveryman.get('id');
 
     db.order.update(
         //set values
@@ -213,7 +213,7 @@ app.put('/employee/finishorder/:id', middlewareEmployee.requireEmployeeAuthentic
         // where clause
         {
             where: {
-                employeeId: employeeId,
+                deliverymanId: deliverymanId,
                 Id: orderId
             }
 
@@ -224,7 +224,7 @@ app.put('/employee/finishorder/:id', middlewareEmployee.requireEmployeeAuthentic
 
 
 db.sequelize.sync({
-    force: true
+    // force: true
 }).then(function() {
     app.listen(PORT, function() {
         console.log('Express listen on port ' + PORT + '!');

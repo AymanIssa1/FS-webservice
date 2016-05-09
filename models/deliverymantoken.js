@@ -2,7 +2,7 @@ var cryptojs = require('crypto-js');
 
 module.exports = function (sequelize, DataTypes) {
 
-    return sequelize.define('employeetoken' , {
+    return sequelize.define('deliverymantoken' , {
         token: {
             type: DataTypes.VIRTUAL,
             allowNull: false,

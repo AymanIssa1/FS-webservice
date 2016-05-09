@@ -3,8 +3,8 @@ var cryptojs = require('crypto-js');
 var jwt = require('jsonwebtoken');
 
 module.exports = function(sequelize, DataTypes) {
-    var employee = sequelize.define('employee', {
-        employeeFullName: {
+    var deliveryman = sequelize.define('deliveryman', {
+        deliverymanFullName: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
@@ -55,9 +55,9 @@ module.exports = function(sequelize, DataTypes) {
 
     }, {
         hooks: {
-            beforeValidate: function(employee, options) {
-                if (typeof employee.email === 'string') {
-                    employee.email = employee.email.toLowerCase();
+            beforeValidate: function(deliveryman, options) {
+                if (typeof deliveryman.email === 'string') {
+                    deliveryman.email = deliveryman.email.toLowerCase();
                 }
             }
         },
@@ -68,16 +68,16 @@ module.exports = function(sequelize, DataTypes) {
                         return reject();
                     }
 
-                    employee.findOne({
+                    deliveryman.findOne({
                         where: {
                             email: body.email,
                             password: body.password
                         }
-                    }).then(function(employee) {
-                        if (!employee) {
+                    }).then(function(deliveryman) {
+                        if (!deliveryman) {
                             return reject();
                         }
-                        resolve(employee);
+                        resolve(deliveryman);
                     }, function(e) {
                         reject();
                     });
@@ -90,9 +90,9 @@ module.exports = function(sequelize, DataTypes) {
                         var bytes = cryptojs.AES.decrypt(decodedJWT.token, 'xyz987!@#!');
                         var tokenData = JSON.parse(bytes.toString(cryptojs.enc.Utf8));
 
-                        employee.findById(tokenData.id).then(function(employee) {
-                            if (employee) {
-                                resolve(employee);
+                        deliveryman.findById(tokenData.id).then(function(deliveryman) {
+                            if (deliveryman) {
+                                resolve(deliveryman);
                             } else {
                                 reject();
                             }
@@ -109,7 +109,7 @@ module.exports = function(sequelize, DataTypes) {
         instanceMethods: {
             toPublicJSON: function() {
                 var json = this.toJSON();
-                return _.pick(json, 'id', 'email', 'employeeFullName', 'isMale', 'birthDate', 'address', 'phone', 'createdAt', 'updatedAt');
+                return _.pick(json, 'id', 'email', 'deliverymanFullName', 'isMale', 'birthDate', 'address', 'phone', 'createdAt', 'updatedAt');
             },
             generateToken: function(type) {
                 if (!_.isString(type)) {
@@ -134,5 +134,5 @@ module.exports = function(sequelize, DataTypes) {
             }
         }
     });
-    return employee;
+    return deliveryman;
 };

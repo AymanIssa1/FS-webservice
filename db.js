@@ -30,10 +30,10 @@ if (env === 'production') {
 var db = {};
 
 db.businesstoken = sequelize.import(__dirname + '/models/businesstoken.js');
-db.employeetoken = sequelize.import(__dirname + '/models/employeetoken.js');
+db.deliverymantoken = sequelize.import(__dirname + '/models/deliverymantoken.js');
 
 db.business = sequelize.import(__dirname + '/models/business.js');
-db.employee = sequelize.import(__dirname + '/models/employee.js');
+db.deliveryman = sequelize.import(__dirname + '/models/deliveryman.js');
 db.order = sequelize.import(__dirname + '/models/order.js');
 
 
@@ -41,18 +41,18 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 
-// relation between orders and (business , employee)
+// relation between orders and (business , deliveryman)
 //orders and business
 db.order.belongsTo(db.business);
 db.business.hasMany(db.order);
 
-//order and employee
-db.order.belongsTo(db.employee, {
+//order and deliveryman
+db.order.belongsTo(db.deliveryman, {
   foreignKey: {
     allowNull: true
   }
 });
-db.employee.hasMany(db.order, {
+db.deliveryman.hasMany(db.order, {
   foreignKey: {
     allowNull: true
   }
