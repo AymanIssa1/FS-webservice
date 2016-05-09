@@ -113,7 +113,7 @@ app.delete('/deliveryman/logout', middlewareDeliveryman.requireAuthentication, f
 
 
 //business post an order
-app.post('/order/add', middlewareBusiness.requireAuthentication, function(request, response) {
+app.post('/business/order/add', middlewareBusiness.requireAuthentication, function(request, response) {
     var body = _.pick(request.body, "description", "lat_start", "lng_start", "lat_end", "lng_end", "distance", "duration");
     body.order_status = "NEW";
 
@@ -129,7 +129,7 @@ app.post('/order/add', middlewareBusiness.requireAuthentication, function(reques
 });
 
 //business see all of his history
-app.get('/order/history', middlewareBusiness.requireAuthentication, function(request, response) {
+app.get('/business/order/history', middlewareBusiness.requireAuthentication, function(request, response) {
 
     var where = {
         businessId: request.business.get('id')
@@ -145,7 +145,7 @@ app.get('/order/history', middlewareBusiness.requireAuthentication, function(req
 });
 
 // deliveryman get avaliable orders
-app.get('/orders', middlewareDeliveryman.requireAuthentication, function(request, response) {
+app.get('/AvaliableOrders', middlewareDeliveryman.requireAuthentication, function(request, response) {
     db.order.findAll({
         where: {
             order_status: "NEW",
@@ -222,6 +222,21 @@ app.put('/deliveryman/finishorder/:id', middlewareDeliveryman.requireAuthenticat
     });
 });
 
+//deliveryman see all of his history
+app.get('/deliveryman/order/history', middlewareDeliveryman.requireAuthentication, function(request, response) {
+
+    var where = {
+        deliverymanId: request.deliveryman.get('id')
+    };
+
+    db.order.findAll({
+        where: where
+    }).then(function(orders) {
+        response.json(orders)
+    }, function() {
+        response.status(500).send();
+    });
+});
 
 db.sequelize.sync({
     // force: true
