@@ -170,7 +170,7 @@ app.put('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthenticatio
 
     db.order.findOne({
         where: {
-            Id: orderId
+            id: orderId
         }
     }).then(function(order) {
         if (!order.deliverymanId) {
