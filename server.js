@@ -208,7 +208,7 @@ var orderId = parseInt(request.params.id, 10);
 
     db.order.findOne({
         where: {
-            Id: orderId,
+            id: orderId,
             deliverymanId: deliverymanId,
             order_status: "TOKE"
         }
@@ -236,7 +236,7 @@ app.put('/deliveryman/finishorder/:id', middlewareDeliveryman.requireAuthenticat
         {
             where: {
                 deliverymanId: deliverymanId,
-                Id: orderId
+                id: orderId
             }
 
         }).then(function() {
