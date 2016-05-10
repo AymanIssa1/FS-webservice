@@ -184,7 +184,7 @@ app.put('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthenticatio
                 // where clause
                 {
                     where: {
-                        Id: orderId
+                        id: orderId
                     }
 
                 }).then(function() {
