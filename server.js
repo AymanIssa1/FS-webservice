@@ -199,6 +199,27 @@ app.put('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthenticatio
 
 });
 
+//deliveryman get token order
+app.get('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthentication, function(request,response) {
+var orderId = parseInt(request.params.id, 10);
+
+    var deliverymanId = request.deliveryman.get('id');
+
+    db.order.findOne({
+        where: {
+            Id: orderId,
+            deliverymanId: deliverymanId,
+            order_status: "TOKE"
+        }
+    }).then(function(order) {
+        if (order) {
+            response.json(order);
+        } else {
+            response.status(500).send();
+        }
+    })
+});
+
 //deliveryman finish the order
 app.put('/deliveryman/finishorder/:id', middlewareDeliveryman.requireAuthentication, function(request, response) {
     var orderId = parseInt(request.params.id, 10);
