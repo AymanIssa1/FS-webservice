@@ -191,8 +191,9 @@ app.put('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthenticatio
                 response.status(204).send();
             });
         } else {
+            response.status(404).send();
 
-            response.status(500).send();
+            // response.status(500).send();
         }
     })
 
