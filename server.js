@@ -128,11 +128,46 @@ app.post('/business/order/add', middlewareBusiness.requireAuthentication, functi
     });
 });
 
-//business see all of his history
-app.get('/business/order/history', middlewareBusiness.requireAuthentication, function(request, response) {
+//business see all of his history of new orders
+app.get('/business/order/history/neworders', middlewareBusiness.requireAuthentication, function(request, response) {
 
     var where = {
-        businessId: request.business.get('id')
+        businessId: request.business.get('id'),
+        order_status: "NEW"
+    };
+
+    db.order.findAll({
+        where: where
+    }).then(function(orders) {
+        response.json(orders)
+    }, function() {
+        response.status(500).send();
+    });
+});
+
+//business see all of his history of token orders
+app.get('/business/order/history/tokenorders', middlewareBusiness.requireAuthentication, function(request, response) {
+
+    var where = {
+        businessId: request.business.get('id'),
+        order_status: "TOKE"
+    };
+
+    db.order.findAll({
+        where: where
+    }).then(function(orders) {
+        response.json(orders)
+    }, function() {
+        response.status(500).send();
+    });
+});
+
+//business see all of his history of finished orders
+app.get('/business/order/history/finishedorders', middlewareBusiness.requireAuthentication, function(request, response) {
+
+    var where = {
+        businessId: request.business.get('id'),
+        order_status: "DONE"
     };
 
     db.order.findAll({
@@ -148,7 +183,7 @@ app.get('/business/order/history', middlewareBusiness.requireAuthentication, fun
 app.get('/AvaliableOrders', middlewareDeliveryman.requireAuthentication, function(request, response) {
     db.order.findAll({
         where: {
-            order_status: "NEW",
+            order_status: "NEW"
         }
     }).then(function(order) {
         response.json(order);
