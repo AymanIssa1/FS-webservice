@@ -259,7 +259,7 @@ app.put('/deliveryman/finishorder/:id', middlewareDeliveryman.requireAuthenticat
 });
 
 //deliveryman see all of his history
-app.get('/deliveryman/order/history', middlewareDeliveryman.requireAuthentication, function(request, response) {
+app.get('/deliveryman/finishorder/history', middlewareDeliveryman.requireAuthentication, function(request, response) {
 
     var where = {
         deliverymanId: request.deliveryman.get('id'),
@@ -274,6 +274,28 @@ app.get('/deliveryman/order/history', middlewareDeliveryman.requireAuthenticatio
         response.status(500).send();
     });
 });
+
+//deliveryman get token order
+app.get('/deliveryman/finishorder/history/:id', middlewareDeliveryman.requireAuthentication, function(request, response) {
+    var orderId = parseInt(request.params.id, 10);
+
+    var deliverymanId = request.deliveryman.get('id');
+
+    db.order.findOne({
+        where: {
+            id: orderId,
+            deliverymanId: deliverymanId,
+            order_status: "DONE"
+        }
+    }).then(function(order) {
+        if (order) {
+            response.json(order);
+        } else {
+            response.status(500).send();
+        }
+    })
+});
+
 
 db.sequelize.sync({
     // force: true
