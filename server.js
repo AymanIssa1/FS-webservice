@@ -150,11 +150,6 @@ app.get('/AvaliableOrders', middlewareDeliveryman.requireAuthentication, functio
         where: {
             order_status: "NEW",
         }
-        // ,
-        // include: [{
-        //     models: customeraddress
-        // }],
-        // raw: true
     }).then(function(order) {
         response.json(order);
     }, function(e) {
@@ -200,9 +195,26 @@ app.put('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthenticatio
 
 });
 
+//delivery get his token orders
+app.get('/deliveryman/takeorder/', middlewareDeliveryman.requireAuthentication, function(request, response) {
+    var deliverymanId = request.deliveryman.get('id');
+
+    db.order.findAll({
+        where: {
+            order_status: "TOKE",
+            deliverymanId: deliverymanId
+        }
+    }).then(function(order) {
+        response.json(order);
+    }, function(e) {
+        response.status(500).send();
+    });
+
+});
+
 //deliveryman get token order
-app.get('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthentication, function(request,response) {
-var orderId = parseInt(request.params.id, 10);
+app.get('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthentication, function(request, response) {
+    var orderId = parseInt(request.params.id, 10);
 
     var deliverymanId = request.deliveryman.get('id');
 
@@ -220,6 +232,8 @@ var orderId = parseInt(request.params.id, 10);
         }
     })
 });
+
+
 
 //deliveryman finish the order
 app.put('/deliveryman/finishorder/:id', middlewareDeliveryman.requireAuthentication, function(request, response) {
