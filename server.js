@@ -262,7 +262,8 @@ app.put('/deliveryman/finishorder/:id', middlewareDeliveryman.requireAuthenticat
 app.get('/deliveryman/order/history', middlewareDeliveryman.requireAuthentication, function(request, response) {
 
     var where = {
-        deliverymanId: request.deliveryman.get('id')
+        deliverymanId: request.deliveryman.get('id'),
+        order_status: "DONE"
     };
 
     db.order.findAll({
