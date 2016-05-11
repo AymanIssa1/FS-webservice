@@ -128,6 +128,26 @@ app.post('/business/order/add', middlewareBusiness.requireAuthentication, functi
     });
 });
 
+//business get selected order
+app.get('/business/order/:id', middlewareBusiness.requireAuthentication, function(request, response) {
+    var orderId = parseInt(request.params.id, 10);
+
+    var businessId = request.business.get('id');
+
+    db.order.findOne({
+        where: {
+            id: orderId,
+            businessId: businessId
+        }
+    }).then(function(order) {
+        if (order) {
+            response.json(order);
+        } else {
+            response.status(500).send();
+        }
+    })
+});
+
 //business see all of his history of new orders
 app.get('/business/order/history/neworders', middlewareBusiness.requireAuthentication, function(request, response) {
 
