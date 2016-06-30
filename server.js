@@ -209,6 +209,7 @@ app.get('/AvaliableOrders', middlewareDeliveryman.requireAuthentication, functio
         response.json(order);
     }, function(e) {
         response.status(500).send();
+        console.log(e);
     });
 });
 
