@@ -1,4 +1,3 @@
-
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define('order', {
 
@@ -32,6 +31,14 @@ module.exports = function(sequelize, DataTypes) {
         lng_end:{
             type: DataTypes.DOUBLE,
             allowNull: false
+        },
+        order_lat:{
+            type: DataTypes.DOUBLE,
+            allowNull: true
+        },
+        order_lng:{
+            type: DataTypes.DOUBLE,
+            allowNull: true
         },
         distance:{
             type: DataTypes.TEXT,

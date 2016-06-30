@@ -348,7 +348,37 @@ app.get('/deliveryman/finishorder/history/:id', middlewareDeliveryman.requireAut
         } else {
             response.status(500).send();
         }
-    })
+    });
+});
+
+//update deliveryman location with the order
+app.put('/order/orderlocation/:id',middlewareDeliveryman.requireAuthentication, function(request, response) {
+    var orderId = parseInt(request.params.id, 10);
+    var body = _.pick(request.body, "order_lat", "order_lng");
+    body.orderId=orderId;
+    
+    var deliverymanId = request.deliveryman.get('id');
+    
+    db.order.update(
+        //set values
+        {
+            order_lat: body.order_lat,
+            order_lng: body.order_lng
+        },
+        // where clause
+        {
+            where: {
+                deliverymanId: deliverymanId,
+                id: orderId
+            }
+
+        }).then(function() {
+            
+            console.log(body.order_lat + " " + body.order_lng);
+            
+            response.status(204).send();
+    });
+    
 });
 
 
