@@ -53,6 +53,24 @@ app.post('/business/login', function(request, response) {
 
 });
 
+//business if this accessToken is exist in database
+app.get('/business/checkAccessToken', middlewareBusiness.requireAuthentication, function(request, response) {
+
+    var businessId = request.business.get('id');
+
+    db.business.findOne({
+        where: {
+            id: businessId
+        }
+    }).then(function(business) {
+        if (business) {
+            response.status(204).send();
+        } else {
+            response.status(404).send();
+        }
+    })
+});
+
 // business logging out
 app.delete('/business/logout', middlewareBusiness.requireAuthentication, function(request, response) {
     request.customertoken.destroy().then(function() {
@@ -100,6 +118,24 @@ app.post('/deliveryman/login', function(request, response) {
         response.status(401).send();
     });
 
+});
+
+//deliveryman if this accessToken is exist in database
+app.get('/deliveryman/checkAccessToken', middlewareDeliveryman.requireAuthentication, function(request, response) {
+
+    var deliverymanId = request.deliveryman.get('id');
+
+    db.deliveryman.findOne({
+        where: {
+            id: deliverymanId
+        }
+    }).then(function(deliveryman) {
+        if (deliveryman) {
+            response.status(204).send();
+        } else {
+            response.status(404).send();
+        }
+    })
 });
 
 //deliveryman Logging out
@@ -357,9 +393,9 @@ app.put('/order/orderlocation/:id',middlewareDeliveryman.requireAuthentication, 
     var orderId = parseInt(request.params.id, 10);
     var body = _.pick(request.body, "order_lat", "order_lng");
     body.orderId=orderId;
-    
+
     var deliverymanId = request.deliveryman.get('id');
-    
+
     db.order.update(
         //set values
         {
@@ -374,12 +410,12 @@ app.put('/order/orderlocation/:id',middlewareDeliveryman.requireAuthentication, 
             }
 
         }).then(function() {
-            
+
             console.log(body.order_lat + " " + body.order_lng);
-            
+
             response.status(204).send();
     });
-    
+
 });
 
 db.sequelize.sync({
