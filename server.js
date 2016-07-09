@@ -64,7 +64,7 @@ app.get('/business/checkAccessToken', middlewareBusiness.requireAuthentication, 
         }
     }).then(function(business) {
         if (business) {
-            response.status(204).send();
+            response.json(business.toPublicJSON());
         } else {
             response.status(404).send();
         }
@@ -131,7 +131,7 @@ app.get('/deliveryman/checkAccessToken', middlewareDeliveryman.requireAuthentica
         }
     }).then(function(deliveryman) {
         if (deliveryman) {
-            response.status(204).send();
+            response.json(deliveryman.toPublicJSON());
         } else {
             response.status(404).send();
         }
