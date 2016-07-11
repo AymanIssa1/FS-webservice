@@ -72,7 +72,7 @@ module.exports = function(sequelize, DataTypes) {
 
                     deliveryman.findOne({
                         where: {
-                            email: body.email,
+                            email: body.email.toLowerCase(),
                             password: body.password
                         }
                     }).then(function(deliveryman) {

@@ -69,7 +69,7 @@ module.exports = function(sequelize, DataTypes) {
 
                     business.findOne({
                         where: {
-                            email: body.email,
+                            email: body.email.toLowerCase(),
                             password: body.password
                         }
                     }).then(function(business) {
