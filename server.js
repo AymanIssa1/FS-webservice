@@ -80,6 +80,41 @@ app.delete('/business/logout', middlewareBusiness.requireAuthentication, functio
     });
 });
 
+//business edit profile
+app.put('/business/uploadprofilephoto',middlewareBusiness.requireAuthentication,function(request,response) {
+    var businessId = request.business.get('id');
+    var body = _.pick(request.body,'customerFirstName','customerLastName','companyName','isMale', 'phone' ,'img_url');
+
+    db.business.findOne(
+        {
+            //where clause
+            where: {
+                id: businessId
+            }
+        }).then(function(business) {
+            if(!business.businessId) {
+                db.business.update(
+                    //set values
+                    {
+                        img_url:body.img_url
+                    },
+                    // where clause
+                    {
+                        where: {
+                            id : businessId
+                        }
+                    }).then(function() {
+                        response.status(204).send();
+                    });
+            } else {
+                response.status(404).send();
+            }
+        }, function(e) {
+        response.status(500).send();
+    });
+
+});
+
 // Register New deliveryman
 app.post('/deliveryman/register', function(request, response) {
 
@@ -147,6 +182,40 @@ app.delete('/deliveryman/logout', middlewareDeliveryman.requireAuthentication, f
     });
 });
 
+//deliveryman edit profile
+app.put('/deliveryman/uploadprofilephoto',middlewareDeliveryman.requireAuthentication,function(request,response) {
+    var deliverymanId = request.deliveryman.get('id');
+    var body = _.pick(request.body,'img_url');
+
+    db.deliveryman.findOne(
+        {
+            //where clause
+            where: {
+                id: deliverymanId
+            }
+        }).then(function(deliveryman) {
+            if(!deliveryman.deliverymanId) {
+                db.deliveryman.update(
+                    //set values
+                    {
+                        img_url:body.img_url
+                    },
+                    // where clause
+                    {
+                        where: {
+                            id : deliverymanId
+                        }
+                    }).then(function() {
+                        response.status(204).send();
+                    });
+            } else {
+                response.status(404).send();
+            }
+        }, function(e) {
+        response.status(500).send();
+    });
+
+});
 
 //business post an order
 app.post('/business/order/add', middlewareBusiness.requireAuthentication, function(request, response) {
@@ -248,6 +317,8 @@ app.get('/AvaliableOrders', middlewareDeliveryman.requireAuthentication, functio
         console.log(e);
     });
 });
+
+
 
 //deliveryman take order (update)
 app.put('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthentication, function(request, response) {

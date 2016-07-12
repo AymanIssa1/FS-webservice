@@ -35,6 +35,10 @@ module.exports = function(sequelize, DataTypes) {
                 len: [1, 16]
             }
         },
+        img_url: {
+            type: DataTypes.STRING,
+            allownull: true
+        },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -111,7 +115,7 @@ module.exports = function(sequelize, DataTypes) {
         instanceMethods: {
             toPublicJSON: function() {
                 var json = this.toJSON();
-                return _.pick(json, 'id', 'email', 'deliverymanFullName', 'isMale', 'birthDate', 'address', 'phone', 'createdAt', 'updatedAt');
+                return _.pick(json, 'id', 'email', 'deliverymanFullName', 'isMale', 'birthDate', 'address', 'phone','img_url', 'createdAt', 'updatedAt');
             },
             generateToken: function(type) {
                 if (!_.isString(type)) {
