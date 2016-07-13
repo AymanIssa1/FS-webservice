@@ -115,6 +115,46 @@ app.put('/business/uploadprofilephoto',middlewareBusiness.requireAuthentication,
 
 });
 
+//business get deliveryman profile
+app.get('/business/getDeliverymanProfile/:id',middlewareBusiness.requireAuthentication, function(request,response) {
+    var deliverymanId = parseInt(request.params.id, 10);
+
+     db.deliveryman.findOne(
+        {
+            //where clause
+            where: {
+                id: deliverymanId
+            }
+        }).then(function(deliveryman) {
+            if (deliveryman) {
+                response.json(deliveryman.toPublicJSON());
+            } else {
+                response.status(404).send();
+            }
+        });
+
+});
+
+//business get deliveryman profile
+app.get('/deliveryman/getBusinessProfile/:id',middlewareDeliveryman.requireAuthentication, function(request,response) {
+    var businessId = parseInt(request.params.id, 10);
+
+     db.business.findOne(
+        {
+            //where clause
+            where: {
+                id: businessId
+            }
+        }).then(function(business) {
+            if (business) {
+                response.json(business.toPublicJSON());
+            } else {
+                response.status(404).send();
+            }
+        });
+
+});
+
 // Register New deliveryman
 app.post('/deliveryman/register', function(request, response) {
 
