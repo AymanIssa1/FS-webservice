@@ -52,6 +52,10 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.DATE,
             allowNull: true
         },
+        pickAt: {
+            type: DataTypes.DATE,
+            allowNull: true
+        },
         finishedAt: {
             type: DataTypes.DATE,
             allowNull: true

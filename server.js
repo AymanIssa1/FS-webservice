@@ -371,29 +371,78 @@ app.put('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthenticatio
             id: orderId
         }
     }).then(function(order) {
-        if (!order.deliverymanId) {
-            db.order.update(
-                //set values
-                {
-                    deliverymanId: deliverymanId,
-                    tokeAt: new Date(),
-                    order_status: "TOKE"
-                },
-                // where clause
-                {
-                    where: {
-                        id: orderId
-                    }
+                // check if that raw in avaliable or not
+        if(order !== null) {
+            if (!order.deliverymanId) {
+                db.order.update(
+                    //set values
+                    {
+                        deliverymanId: deliverymanId,
+                        tokeAt: new Date(),
+                        order_status: "TOKE"
+                    },
+                    // where clause
+                    {
+                        where: {
+                            id: orderId
+                        }
 
-                }).then(function() {
-                response.status(204).send();
-            });
+                    }).then(function() {
+                    response.status(204).send();
+                });
+            } else {
+                response.status(500).send();
+            }
         } else {
             response.status(404).send();
-
-            // response.status(500).send();
         }
     })
+
+
+});
+
+//deliveryman pick order (update)
+app.put('/deliveryman/pickorder/:id', middlewareDeliveryman.requireAuthentication, function(request, response) {
+    var orderId = parseInt(request.params.id, 10);
+
+    var deliverymanId = request.deliveryman.get('id');
+
+    db.order.findOne({
+        where: {
+            id: orderId,
+            order_status: "TOKE",
+            deliverymanId: deliverymanId
+        }
+    }).then(function(order) {
+        // check if that raw in avaliable or not
+        if(order !== null) {
+            if (order.tokeAt) {
+                db.order.update(
+                    //set values
+                    {
+                        pickAt: new Date(),
+                        order_status: "PICKED"
+                    },
+                    // where clause
+                    {
+                        where: {
+                            id: orderId
+                        }
+
+                    }).then(function() {
+                    response.status(204).send();
+                },function(e){
+                    response.json(e).send();
+                });
+            } else {
+                response.status(500).send();
+            }
+        } else {
+            response.status(404).send();
+        }
+    },function(e){
+        response.json(e).send();
+    });
 
 
 });
@@ -404,7 +453,7 @@ app.get('/deliveryman/takeorder/', middlewareDeliveryman.requireAuthentication, 
 
     db.order.findAll({
         where: {
-            order_status: "TOKE",
+            order_status:["TOKE","PICKED"],
             deliverymanId: deliverymanId
         }
     }).then(function(order) {
@@ -424,8 +473,9 @@ app.get('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthenticatio
     db.order.findOne({
         where: {
             id: orderId,
-            deliverymanId: deliverymanId,
-            order_status: "TOKE"
+            deliverymanId: deliverymanId
+            // ,
+            // order_status: "TOKE"
         }
     }).then(function(order) {
         if (order) {
@@ -434,6 +484,7 @@ app.get('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthenticatio
             response.status(500).send();
         }
     })
+
 });
 
 
@@ -443,21 +494,41 @@ app.put('/deliveryman/finishorder/:id', middlewareDeliveryman.requireAuthenticat
     var orderId = parseInt(request.params.id, 10);
     var deliverymanId = request.deliveryman.get('id');
 
-    db.order.update(
-        //set values
-        {
-            finishedAt: new Date(),
-            order_status: "DONE"
-        },
-        // where clause
-        {
-            where: {
-                deliverymanId: deliverymanId,
-                id: orderId
-            }
+    db.order.findOne({
+        where: {
+            id: orderId,
+            order_status: "PICKED",
+            deliverymanId: deliverymanId
+        }
+    }).then(function(order) {
+        // check if that raw in avaliable or not
+        if(order !== null) {
+            if (order.tokeAt) {
+                db.order.update(
+                    //set values
+                    {
+                        finishedAt: new Date(),
+                        order_status: "DONE"
+                    },
+                    // where clause
+                    {
+                        where: {
+                            id: orderId
+                        }
 
-        }).then(function() {
-        response.status(204).send();
+                    }).then(function() {
+                    response.status(204).send();
+                },function(e){
+                    response.json(e).send();
+                });
+            } else {
+                response.status(500).send();
+            }
+        } else {
+            response.status(404).send();
+        }
+    },function(e){
+        response.json(e).send();
     });
 });
 
@@ -530,7 +601,7 @@ app.put('/order/orderlocation/:id',middlewareDeliveryman.requireAuthentication, 
 });
 
 db.sequelize.sync({
-    // force: true
+    force: true
 }).then(function() {
     app.listen(PORT, function() {
         console.log('Express listen on port ' + PORT + '!');
