@@ -388,7 +388,16 @@ app.put('/deliveryman/takeorder/:id', middlewareDeliveryman.requireAuthenticatio
                         }
 
                     }).then(function() {
-                    response.status(204).send();
+
+                    //sending current order
+                    db.order.findOne({
+                        where: {
+                            id: orderId
+                        }
+                    }).then(function(order) {
+                        response.json(order);
+                    });
+
                 });
             } else {
                 response.status(500).send();
@@ -430,7 +439,16 @@ app.put('/deliveryman/pickorder/:id', middlewareDeliveryman.requireAuthenticatio
                         }
 
                     }).then(function() {
-                    response.status(204).send();
+
+                    //sending current order
+                    db.order.findOne({
+                        where: {
+                            id: orderId
+                        }
+                    }).then(function(order) {
+                        response.json(order);
+                    });
+
                 },function(e){
                     response.json(e).send();
                 });
@@ -517,7 +535,16 @@ app.put('/deliveryman/finishorder/:id', middlewareDeliveryman.requireAuthenticat
                         }
 
                     }).then(function() {
-                    response.status(204).send();
+
+                    //sending current order
+                    db.order.findOne({
+                        where: {
+                            id: orderId
+                        }
+                    }).then(function(order) {
+                        response.json(order);
+                    });
+
                 },function(e){
                     response.json(e).send();
                 });
